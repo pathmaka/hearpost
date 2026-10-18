@@ -1,4 +1,4 @@
-=== Article Voice Reader ===
+=== Hearpost ===
 Contributors: pathmaka
 Tags: text to speech, accessibility, audio, speech synthesis, read aloud
 Requires at least: 5.8
@@ -12,7 +12,7 @@ A floating "Listen to this article" widget powered by the visitor's own browser.
 
 == Description ==
 
-Article Voice Reader adds a floating text-to-speech widget to your posts and pages, using the browser's built-in [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) (`SpeechSynthesisUtterance`). Nothing is sent to any external server — the entire reading happens locally in the visitor's browser.
+Hearpost adds a floating text-to-speech widget to your posts and pages, using the browser's built-in [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) (`SpeechSynthesisUtterance`). Nothing is sent to any external server — the entire reading happens locally in the visitor's browser.
 
 = Features =
 
@@ -22,7 +22,7 @@ Article Voice Reader adds a floating text-to-speech widget to your posts and pag
 * **Six position presets** — Top Left, Top Right, Middle Left, Middle Right, Bottom Left, Bottom Right
 * **Customizable icon color** via a native WordPress color picker
 * **Customizable widget title**, also shown as a hover tooltip on the collapsed icon
-* **`[voice_reader]` shortcode** for manual placement, if you'd rather not auto-insert it everywhere
+* **`[hearpost_reader]` shortcode** for manual placement, if you'd rather not auto-insert it everywhere
 * **Reset to Defaults** button to wipe customizations and start over
 * Fully self-contained icon (inline SVG) — no external requests, not even to WordPress's own emoji CDN
 
@@ -38,23 +38,23 @@ Article Voice Reader adds a floating text-to-speech widget to your posts and pag
 = From your WordPress dashboard =
 
 1. Visit **Plugins → Add New**
-2. Search for "Article Voice Reader"
+2. Search for "Hearpost"
 3. Click **Install Now**, then **Activate**
 
 = Manual installation =
 
 1. Download the plugin as a `.zip` file
-2. Upload the `article-voice-reader` folder to `/wp-content/plugins/`, or install it via **Plugins → Add New → Upload Plugin**
-3. Activate **Article Voice Reader** from the Plugins screen
+2. Upload the `hearpost` folder to `/wp-content/plugins/`, or install it via **Plugins → Add New → Upload Plugin**
+3. Activate **Hearpost** from the Plugins screen
 
 = Once activated =
 
-Configure it at **Settings → Article Voice Reader**.
+Configure it at **Settings → Hearpost**.
 
 = Settings =
 
 * **Enable on** — Choose whether the widget appears on Posts, Pages, or both
-* **Widget** — Toggle automatic insertion on/off. If disabled, place it manually with the `[voice_reader]` shortcode — it still floats at the position chosen below regardless of where the shortcode is placed
+* **Widget** — Toggle automatic insertion on/off. If disabled, place it manually with the `[hearpost_reader]` shortcode — it still floats at the position chosen below regardless of where the shortcode is placed
 * **Position** — Where the widget floats: Top/Middle/Bottom × Left/Right (6 options)
 * **Icon color** — Background color of the icon and Play button, via a standard color picker
 * **Default speed** — Initial playback speed (0.5x–2x) before a visitor adjusts the slider
@@ -73,7 +73,7 @@ The dropdown is only shown when the visitor's browser reports more than one avai
 
 = Can I place the widget manually instead of having it auto-inserted? =
 
-Yes. Turn off automatic insertion under Settings → Article Voice Reader → Widget, then add the `[voice_reader]` shortcode to any post or page where you want it. Note that it always floats at the position configured in settings, regardless of where the shortcode itself is placed in the content.
+Yes. Turn off automatic insertion under Settings → Hearpost → Widget, then add the `[hearpost_reader]` shortcode to any post or page where you want it. Note that it always floats at the position configured in settings, regardless of where the shortcode itself is placed in the content.
 
 = Does this work on mobile browsers? =
 
@@ -83,7 +83,7 @@ It works wherever the Web Speech API is supported, which varies by browser and O
 
 1. Collapsed widget — the floating icon as visitors first see it
 2. Expanded widget — the player panel with Play/Pause, speed slider, and voice selector
-3. Settings page — Settings → Article Voice Reader in wp-admin
+3. Settings page — Settings → Hearpost in wp-admin
 4. Widget while actively reading an article aloud
 
 == Changelog ==
@@ -94,7 +94,7 @@ It works wherever the Web Speech API is supported, which varies by browser and O
 * Play/Pause toggle with adjustable speed (0.5x–2x slider)
 * Optional voice selector, shown only when the browser offers more than one voice
 * Six position presets, customizable icon color, and customizable widget title
-* `[voice_reader]` shortcode for manual placement
+* `[hearpost_reader]` shortcode for manual placement
 * Reset to Defaults option
 * Self-contained inline SVG icon (no external requests)
 

@@ -1,9 +1,9 @@
 (function () {
-	var i18n = window.avrPlayerData || {};
+	var i18n = window.hearpostPlayerData || {};
 	var notSupportedText = i18n.notSupported || 'Voice reading is not supported in this browser.';
 
 	if (!('speechSynthesis' in window)) {
-		document.querySelectorAll('.avr-widget').forEach(function (el) {
+		document.querySelectorAll('.hearpost-widget').forEach(function (el) {
 			el.innerHTML = '<em>' + notSupportedText + '</em>';
 		});
 		return;
@@ -20,14 +20,14 @@
 		} else if (!voicesResolved) {
 			return; // Not loaded yet — wait for onvoiceschanged or the fallback below.
 		}
-		document.querySelectorAll('.avr-widget').forEach(populateVoiceSelect);
+		document.querySelectorAll('.hearpost-widget').forEach(populateVoiceSelect);
 	}
 
 	function populateVoiceSelect(widget) {
 		if (!voicesResolved) {
 			return; // Avoid deciding to remove the dropdown before we truly know the count.
 		}
-		var label = widget.querySelector('.avr-voice-label');
+		var label = widget.querySelector('.hearpost-voice-label');
 		if (!label) {
 			return;
 		}
@@ -35,7 +35,7 @@
 			label.remove();
 			return;
 		}
-		var select = label.querySelector('.avr-voice-select');
+		var select = label.querySelector('.hearpost-voice-select');
 		if (!select || select.dataset.populated) {
 			return;
 		}
@@ -57,7 +57,7 @@
 		if (!voicesResolved) {
 			voicesResolved = true;
 			voicesList = window.speechSynthesis.getVoices();
-			document.querySelectorAll('.avr-widget').forEach(populateVoiceSelect);
+			document.querySelectorAll('.hearpost-widget').forEach(populateVoiceSelect);
 		}
 	}, 1000);
 
@@ -67,7 +67,7 @@
 	// ahead of what was actually spoken. ~150 wpm at 1x, in characters/second.
 	var FALLBACK_CHARS_PER_SECOND = 12;
 
-	document.querySelectorAll('.avr-widget').forEach(function (widget) {
+	document.querySelectorAll('.hearpost-widget').forEach(function (widget) {
 		var fullText = JSON.parse(widget.dataset.text || '""');
 		var remainingText = fullText;
 		var lastCharIndex = 0;
@@ -77,15 +77,15 @@
 		// reality in some browsers (notably Chrome) after a few cancel()/speak()
 		// cycles, silently making every decision built on them wrong.
 		var utteranceId = 0;
-		var playBtn = widget.querySelector('.avr-play-btn');
-		var toggleBtn = widget.querySelector('.avr-toggle-btn');
-		var closeBtn = widget.querySelector('.avr-close-btn');
-		var speedSlider = widget.querySelector('.avr-speed-slider');
-		var speedValueDisplay = widget.querySelector('.avr-speed-value');
-		var status = widget.querySelector('.avr-status');
+		var playBtn = widget.querySelector('.hearpost-play-btn');
+		var toggleBtn = widget.querySelector('.hearpost-toggle-btn');
+		var closeBtn = widget.querySelector('.hearpost-close-btn');
+		var speedSlider = widget.querySelector('.hearpost-speed-slider');
+		var speedValueDisplay = widget.querySelector('.hearpost-speed-value');
+		var status = widget.querySelector('.hearpost-status');
 
 		function getVoiceSelect() {
-			return widget.querySelector('.avr-voice-select');
+			return widget.querySelector('.hearpost-voice-select');
 		}
 
 		function setIcon(playing) {
@@ -216,17 +216,17 @@
 		});
 
 		widget.addEventListener('change', function (e) {
-			if (e.target.classList.contains('avr-voice-select') && playState === 'playing') {
+			if (e.target.classList.contains('hearpost-voice-select') && playState === 'playing') {
 				restartFromCurrentPosition();
 			}
 		});
 
 		toggleBtn.addEventListener('click', function () {
-			widget.classList.add('avr-open');
+			widget.classList.add('hearpost-open');
 		});
 
 		closeBtn.addEventListener('click', function () {
-			widget.classList.remove('avr-open');
+			widget.classList.remove('hearpost-open');
 		});
 	});
 

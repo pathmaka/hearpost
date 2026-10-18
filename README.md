@@ -1,4 +1,4 @@
-# Article Voice Reader
+# Hearpost
 
 A floating "Listen to this article" widget for WordPress, powered entirely by the visitor's own browser. No API keys, no external text-to-speech services, no ongoing cost.
 
@@ -10,7 +10,7 @@ A floating "Listen to this article" widget for WordPress, powered entirely by th
 - **Six position presets** — Top Left, Top Right, Middle Left, Middle Right, Bottom Left, Bottom Right
 - **Customizable icon color** via a native WordPress color picker
 - **Customizable widget title**, also shown as a hover tooltip on the collapsed icon
-- **`[voice_reader]` shortcode** for manual placement, if you'd rather not auto-insert it everywhere
+- **`[hearpost_reader]` shortcode** for manual placement, if you'd rather not auto-insert it everywhere
 - **Reset to Defaults** button to wipe customizations and start over
 - Fully self-contained icon (inline SVG) — no external requests, not even to WordPress's own emoji CDN
 
@@ -26,19 +26,19 @@ A floating "Listen to this article" widget for WordPress, powered entirely by th
 1. Download or clone this repo
 2. Upload the folder to `/wp-content/plugins/` so the path looks like:
    ```
-   /wp-content/plugins/article-voice-reader/article-voice-reader.php
+   /wp-content/plugins/hearpost/hearpost.php
    ```
-3. Activate **Article Voice Reader** from the Plugins screen
-4. Configure it at **Settings → Article Voice Reader**
+3. Activate **Hearpost** from the Plugins screen
+4. Configure it at **Settings → Hearpost**
 
-Alternatively, zip the `article-voice-reader` folder and install it via **Plugins → Add New → Upload Plugin**.
+Alternatively, zip the plugin folder (named `hearpost`) and install it via **Plugins → Add New → Upload Plugin**.
 
-## Settings (Settings → Article Voice Reader)
+## Settings (Settings → Hearpost)
 
 | Setting | Description |
 |---|---|
 | **Enable on** | Choose whether the widget appears on Posts, Pages, or both |
-| **Widget** | Toggle automatic insertion on/off. If disabled, place it manually with the `[voice_reader]` shortcode — it still floats at the position chosen below regardless of where the shortcode is placed |
+| **Widget** | Toggle automatic insertion on/off. If disabled, place it manually with the `[hearpost_reader]` shortcode — it still floats at the position chosen below regardless of where the shortcode is placed |
 | **Position** | Where the widget floats: Top/Middle/Bottom × Left/Right (6 options) |
 | **Icon color** | Background color of the icon and Play button, via a standard color picker |
 | **Default speed** | Initial playback speed (0.5x–2x) before a visitor adjusts the slider |
@@ -48,7 +48,7 @@ Alternatively, zip the `article-voice-reader` folder and install it via **Plugin
 ## Shortcode
 
 ```
-[voice_reader]
+[hearpost_reader]
 ```
 
 Use this on any singular post or page if you've turned off automatic insertion but still want the widget on that specific piece of content.
@@ -77,7 +77,7 @@ The widget extracts the plain text of a post/page server-side, then hands it to 
   - Play/Pause toggle with adjustable speed (0.5x–2x slider)
   - Optional voice selector, shown only when the browser offers more than one voice
   - Six position presets, customizable icon color, and customizable widget title
-  - `[voice_reader]` shortcode for manual placement
+  - `[hearpost_reader]` shortcode for manual placement
   - Reset to Defaults option
   - Self-contained inline SVG icon (no external requests)
 

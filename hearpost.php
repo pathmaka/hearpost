@@ -1,21 +1,21 @@
 <?php
 /**
- * Plugin Name: Article Voice Reader
+ * Plugin Name: Hearpost
  * Description: Adds a floating "Listen to this article" widget to your posts using the visitor's browser built-in text-to-speech. No API keys, no external services, no ongoing cost.
  * Version: 1.0.0
  * Author: Pathmaka Galappaththi
  * License: GPL v2 or later
- * Text Domain: article-voice-reader
+ * Text Domain: hearpost
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-class AVR_Voice_Reader {
+class Hearpost_Voice_Reader {
 
-	const OPTION_NAME    = 'avr_settings';
-	const SETTINGS_SLUG  = 'avr-voice-reader';
+	const OPTION_NAME    = 'hearpost_settings';
+	const SETTINGS_SLUG  = 'hearpost-voice-reader';
 	const PLUGIN_VERSION = '1.0.0';
 
 	private static $valid_positions = array(
@@ -34,7 +34,7 @@ class AVR_Voice_Reader {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'wp_footer', array( $this, 'maybe_render_widget' ) );
-		add_shortcode( 'voice_reader', array( $this, 'shortcode_render' ) );
+		add_shortcode( 'hearpost_reader', array( $this, 'shortcode_render' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_assets' ) );
 	}
 
@@ -50,7 +50,7 @@ class AVR_Voice_Reader {
 			'widget_position' => 'middle-right',
 			'widget_color'    => '#007f96',
 			'default_rate'    => '1',
-			'widget_title'    => __( 'Listen to this article', 'article-voice-reader' ),
+			'widget_title'    => __( 'Listen to this article', 'hearpost' ),
 		);
 	}
 
@@ -61,8 +61,8 @@ class AVR_Voice_Reader {
 
 	public function register_settings_page() {
 		$this->settings_hook = add_options_page(
-			__( 'Article Voice Reader Settings', 'article-voice-reader' ),
-			__( 'Article Voice Reader', 'article-voice-reader' ),
+			__( 'Hearpost Settings', 'hearpost' ),
+			__( 'Hearpost', 'hearpost' ),
 			'manage_options',
 			self::SETTINGS_SLUG,
 			array( $this, 'render_settings_page' )
@@ -77,20 +77,20 @@ class AVR_Voice_Reader {
 	 * prompt if the admin refreshes the page).
 	 */
 	public function maybe_handle_reset() {
-		if ( empty( $_POST['avr_reset_defaults'] ) ) {
+		if ( empty( $_POST['hearpost_reset_defaults'] ) ) {
 			return;
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-		check_admin_referer( 'avr_reset_defaults_action', 'avr_reset_nonce' );
+		check_admin_referer( 'hearpost_reset_defaults_action', 'hearpost_reset_nonce' );
 
 		delete_option( self::OPTION_NAME );
 
 		wp_safe_redirect( add_query_arg(
 			array(
-				'page'      => self::SETTINGS_SLUG,
-				'avr-reset' => '1',
+				'page'           => self::SETTINGS_SLUG,
+				'hearpost-reset' => '1',
 			),
 			admin_url( 'options-general.php' )
 		) );
@@ -100,14 +100,14 @@ class AVR_Voice_Reader {
 	public function register_settings() {
 		register_setting( self::SETTINGS_SLUG, self::OPTION_NAME, array( $this, 'sanitize_settings' ) );
 
-		add_settings_section( 'avr_main', '', '__return_false', self::SETTINGS_SLUG );
+		add_settings_section( 'hearpost_main', '', '__return_false', self::SETTINGS_SLUG );
 
-		add_settings_field( 'enable_on', __( 'Enable on', 'article-voice-reader' ), array( $this, 'field_enable_on' ), self::SETTINGS_SLUG, 'avr_main' );
-		add_settings_field( 'auto_insert', __( 'Widget', 'article-voice-reader' ), array( $this, 'field_auto_insert' ), self::SETTINGS_SLUG, 'avr_main' );
-		add_settings_field( 'widget_position', __( 'Position', 'article-voice-reader' ), array( $this, 'field_position' ), self::SETTINGS_SLUG, 'avr_main' );
-		add_settings_field( 'widget_color', __( 'Icon color', 'article-voice-reader' ), array( $this, 'field_color' ), self::SETTINGS_SLUG, 'avr_main' );
-		add_settings_field( 'default_rate', __( 'Default speed', 'article-voice-reader' ), array( $this, 'field_rate' ), self::SETTINGS_SLUG, 'avr_main' );
-		add_settings_field( 'widget_title', __( 'Widget title', 'article-voice-reader' ), array( $this, 'field_title' ), self::SETTINGS_SLUG, 'avr_main' );
+		add_settings_field( 'enable_on', __( 'Enable on', 'hearpost' ), array( $this, 'field_enable_on' ), self::SETTINGS_SLUG, 'hearpost_main' );
+		add_settings_field( 'auto_insert', __( 'Widget', 'hearpost' ), array( $this, 'field_auto_insert' ), self::SETTINGS_SLUG, 'hearpost_main' );
+		add_settings_field( 'widget_position', __( 'Position', 'hearpost' ), array( $this, 'field_position' ), self::SETTINGS_SLUG, 'hearpost_main' );
+		add_settings_field( 'widget_color', __( 'Icon color', 'hearpost' ), array( $this, 'field_color' ), self::SETTINGS_SLUG, 'hearpost_main' );
+		add_settings_field( 'default_rate', __( 'Default speed', 'hearpost' ), array( $this, 'field_rate' ), self::SETTINGS_SLUG, 'hearpost_main' );
+		add_settings_field( 'widget_title', __( 'Widget title', 'hearpost' ), array( $this, 'field_title' ), self::SETTINGS_SLUG, 'hearpost_main' );
 	}
 
 	public function sanitize_settings( $input ) {
@@ -137,25 +137,25 @@ class AVR_Voice_Reader {
 
 	public function field_enable_on() {
 		$s = $this->get_settings();
-		echo '<label><input type="checkbox" name="' . esc_attr( self::OPTION_NAME ) . '[enable_posts]" value="1" ' . checked( 1, $s['enable_posts'], false ) . '> ' . esc_html__( 'Posts', 'article-voice-reader' ) . '</label><br>';
-		echo '<label><input type="checkbox" name="' . esc_attr( self::OPTION_NAME ) . '[enable_pages]" value="1" ' . checked( 1, $s['enable_pages'], false ) . '> ' . esc_html__( 'Pages', 'article-voice-reader' ) . '</label>';
+		echo '<label><input type="checkbox" name="' . esc_attr( self::OPTION_NAME ) . '[enable_posts]" value="1" ' . checked( 1, $s['enable_posts'], false ) . '> ' . esc_html__( 'Posts', 'hearpost' ) . '</label><br>';
+		echo '<label><input type="checkbox" name="' . esc_attr( self::OPTION_NAME ) . '[enable_pages]" value="1" ' . checked( 1, $s['enable_pages'], false ) . '> ' . esc_html__( 'Pages', 'hearpost' ) . '</label>';
 	}
 
 	public function field_auto_insert() {
 		$s = $this->get_settings();
-		echo '<label><input type="checkbox" name="' . esc_attr( self::OPTION_NAME ) . '[auto_insert]" value="1" ' . checked( 1, $s['auto_insert'], false ) . '> ' . esc_html__( 'Automatically show the floating widget', 'article-voice-reader' ) . '</label>';
-		echo '<p class="description">' . esc_html__( 'If disabled, place it manually with the [voice_reader] shortcode. It always floats at the position chosen below, regardless of where the shortcode is placed.', 'article-voice-reader' ) . '</p>';
+		echo '<label><input type="checkbox" name="' . esc_attr( self::OPTION_NAME ) . '[auto_insert]" value="1" ' . checked( 1, $s['auto_insert'], false ) . '> ' . esc_html__( 'Automatically show the floating widget', 'hearpost' ) . '</label>';
+		echo '<p class="description">' . esc_html__( 'If disabled, place it manually with the [hearpost_reader] shortcode. It always floats at the position chosen below, regardless of where the shortcode is placed.', 'hearpost' ) . '</p>';
 	}
 
 	public function field_position() {
 		$s = $this->get_settings();
 		$options = array(
-			'top-left'      => __( 'Top left', 'article-voice-reader' ),
-			'top-right'     => __( 'Top right', 'article-voice-reader' ),
-			'middle-left'   => __( 'Middle left', 'article-voice-reader' ),
-			'middle-right'  => __( 'Middle right', 'article-voice-reader' ),
-			'bottom-left'   => __( 'Bottom left', 'article-voice-reader' ),
-			'bottom-right'  => __( 'Bottom right', 'article-voice-reader' ),
+			'top-left'      => __( 'Top left', 'hearpost' ),
+			'top-right'     => __( 'Top right', 'hearpost' ),
+			'middle-left'   => __( 'Middle left', 'hearpost' ),
+			'middle-right'  => __( 'Middle right', 'hearpost' ),
+			'bottom-left'   => __( 'Bottom left', 'hearpost' ),
+			'bottom-right'  => __( 'Bottom right', 'hearpost' ),
 		);
 		echo '<select name="' . esc_attr( self::OPTION_NAME ) . '[widget_position]">';
 		foreach ( $options as $value => $label ) {
@@ -166,7 +166,7 @@ class AVR_Voice_Reader {
 
 	public function field_color() {
 		$s = $this->get_settings();
-		echo '<input type="text" class="avr-color-field" name="' . esc_attr( self::OPTION_NAME ) . '[widget_color]" value="' . esc_attr( $s['widget_color'] ) . '" data-default-color="#007f96" />';
+		echo '<input type="text" class="hearpost-color-field" name="' . esc_attr( self::OPTION_NAME ) . '[widget_color]" value="' . esc_attr( $s['widget_color'] ) . '" data-default-color="#007f96" />';
 	}
 
 	public function field_rate() {
@@ -174,7 +174,7 @@ class AVR_Voice_Reader {
 		echo '<select name="' . esc_attr( self::OPTION_NAME ) . '[default_rate]">';
 		foreach ( array(
 			'0.75' => '0.75x',
-			'1'    => '1x (' . __( 'normal', 'article-voice-reader' ) . ')',
+			'1'    => '1x (' . __( 'normal', 'hearpost' ) . ')',
 			'1.25' => '1.25x',
 			'1.5'  => '1.5x',
 			'2'    => '2x',
@@ -191,19 +191,19 @@ class AVR_Voice_Reader {
 
 	public function render_settings_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have permission to access this page.', 'article-voice-reader' ) );
+			wp_die( esc_html__( 'You do not have permission to access this page.', 'hearpost' ) );
 		}
 
-		echo '<div class="wrap"><h1>' . esc_html__( 'Article Voice Reader Settings', 'article-voice-reader' ) . '</h1>';
+		echo '<div class="wrap"><h1>' . esc_html__( 'Hearpost Settings', 'hearpost' ) . '</h1>';
 
 		// This flag is purely cosmetic — it only decides whether a "reset done" notice is
 		// shown. The reset itself already happened, nonce-verified, in maybe_handle_reset()
 		// before this redirect; nothing changes based on the flag itself.
-		if ( isset( $_GET['avr-reset'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Article Voice Reader settings have been reset to defaults.', 'article-voice-reader' ) . '</p></div>';
+		if ( isset( $_GET['hearpost-reset'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Hearpost settings have been reset to defaults.', 'hearpost' ) . '</p></div>';
 		}
 
-		echo '<p>' . esc_html__( 'Uses the visitor\'s own browser for text-to-speech — no API keys, no external services, no ongoing cost. Voice quality and the number of available voices depend entirely on the visitor\'s browser and device; if only one voice is available, the voice dropdown is hidden automatically.', 'article-voice-reader' ) . '</p>';
+		echo '<p>' . esc_html__( 'Uses the visitor\'s own browser for text-to-speech — no API keys, no external services, no ongoing cost. Voice quality and the number of available voices depend entirely on the visitor\'s browser and device; if only one voice is available, the voice dropdown is hidden automatically.', 'hearpost' ) . '</p>';
 		echo '<form method="post" action="options.php">';
 		settings_fields( self::SETTINGS_SLUG );
 		do_settings_sections( self::SETTINGS_SLUG );
@@ -211,12 +211,12 @@ class AVR_Voice_Reader {
 		echo '</form>';
 
 		echo '<hr style="margin:24px 0;">';
-		echo '<h2>' . esc_html__( 'Reset', 'article-voice-reader' ) . '</h2>';
-		echo '<p>' . esc_html__( 'Restores every setting above to its original default. This cannot be undone.', 'article-voice-reader' ) . '</p>';
-		echo '<form method="post" onsubmit="return confirm(\'' . esc_js( __( 'Reset all Article Voice Reader settings to their defaults? This cannot be undone.', 'article-voice-reader' ) ) . '\');">';
-		wp_nonce_field( 'avr_reset_defaults_action', 'avr_reset_nonce' );
-		echo '<input type="hidden" name="avr_reset_defaults" value="1">';
-		submit_button( __( 'Reset to Defaults', 'article-voice-reader' ), 'secondary', 'avr_reset_submit', false );
+		echo '<h2>' . esc_html__( 'Reset', 'hearpost' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Restores every setting above to its original default. This cannot be undone.', 'hearpost' ) . '</p>';
+		echo '<form method="post" onsubmit="return confirm(\'' . esc_js( __( 'Reset all Hearpost settings to their defaults? This cannot be undone.', 'hearpost' ) ) . '\');">';
+		wp_nonce_field( 'hearpost_reset_defaults_action', 'hearpost_reset_nonce' );
+		echo '<input type="hidden" name="hearpost_reset_defaults" value="1">';
+		submit_button( __( 'Reset to Defaults', 'hearpost' ), 'secondary', 'hearpost_reset_submit', false );
 		echo '</form>';
 
 		echo '</div>';
@@ -229,7 +229,7 @@ class AVR_Voice_Reader {
 
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_script( 'wp-color-picker' );
-		wp_add_inline_script( 'wp-color-picker', "jQuery(function ($) { $('.avr-color-field').wpColorPicker(); });" );
+		wp_add_inline_script( 'wp-color-picker', "jQuery(function ($) { $('.hearpost-color-field').wpColorPicker(); });" );
 	}
 
 	/* ------------------------------------------------------------------ */
@@ -261,13 +261,13 @@ class AVR_Voice_Reader {
 			return '';
 		}
 
-		$id       = 'avr-widget-' . $instance;
+		$id       = 'hearpost-widget-' . $instance;
 		$position = in_array( $settings['widget_position'], self::$valid_positions, true ) ? $settings['widget_position'] : 'middle-right';
-		$pos_class = 'avr-pos-' . $position;
+		$pos_class = 'hearpost-pos-' . $position;
 
-		$html  = '<div class="avr-widget ' . esc_attr( $pos_class ) . '" id="' . esc_attr( $id ) . '" style="--avr-color: ' . esc_attr( $settings['widget_color'] ) . ';" data-text="' . esc_attr( wp_json_encode( $text ) ) . '">';
+		$html  = '<div class="hearpost-widget ' . esc_attr( $pos_class ) . '" id="' . esc_attr( $id ) . '" style="--hearpost-color: ' . esc_attr( $settings['widget_color'] ) . ';" data-text="' . esc_attr( wp_json_encode( $text ) ) . '">';
 
-		$html .= '<button type="button" class="avr-toggle-btn" aria-label="' . esc_attr__( 'Open voice reader', 'article-voice-reader' ) . '" title="' . esc_attr( $settings['widget_title'] ) . '">'
+		$html .= '<button type="button" class="hearpost-toggle-btn" aria-label="' . esc_attr__( 'Open voice reader', 'hearpost' ) . '" title="' . esc_attr( $settings['widget_title'] ) . '">'
 			. '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="45" height="45" aria-hidden="true">'
 			. '<path d="M8.5 4.5c-2.6 0-4.7 2.2-4.7 5 0 1.9 1 3.5 2.5 4.4v2.1c0 .7.5 1.2 1.2 1.2h1.4v-1.8c.3 0 .6.1.9.1 2.9 0 5.2-2.5 5.2-5.6s-2.9-5.3-6.5-5.3z"/>'
 			. '<circle cx="10.3" cy="8.6" r="0.6" fill="currentColor" stroke="none"/>'
@@ -276,19 +276,19 @@ class AVR_Voice_Reader {
 			. '</svg>'
 			. '</button>';
 
-		$html .= '<div class="avr-panel">';
-		$html .= '<button type="button" class="avr-close-btn" aria-label="' . esc_attr__( 'Close', 'article-voice-reader' ) . '">&times;</button>';
-		$html .= '<div class="avr-widget-title">' . esc_html( $settings['widget_title'] ) . '</div>';
-		$html .= '<button type="button" class="avr-play-btn" aria-label="' . esc_attr__( 'Play', 'article-voice-reader' ) . '">&#9654;</button>';
+		$html .= '<div class="hearpost-panel">';
+		$html .= '<button type="button" class="hearpost-close-btn" aria-label="' . esc_attr__( 'Close', 'hearpost' ) . '">&times;</button>';
+		$html .= '<div class="hearpost-widget-title">' . esc_html( $settings['widget_title'] ) . '</div>';
+		$html .= '<button type="button" class="hearpost-play-btn" aria-label="' . esc_attr__( 'Play', 'hearpost' ) . '">&#9654;</button>';
 
-		$html .= '<div class="avr-speed-control"><span class="avr-speed-label-text">' . esc_html__( 'Speed', 'article-voice-reader' ) . '</span><input type="range" class="avr-speed-slider" min="0.5" max="2" step="0.25" value="' . esc_attr( $settings['default_rate'] ) . '"><span class="avr-speed-value">' . esc_html( rtrim( rtrim( $settings['default_rate'], '0' ), '.' ) ) . 'x</span></div>';
+		$html .= '<div class="hearpost-speed-control"><span class="hearpost-speed-label-text">' . esc_html__( 'Speed', 'hearpost' ) . '</span><input type="range" class="hearpost-speed-slider" min="0.5" max="2" step="0.25" value="' . esc_attr( $settings['default_rate'] ) . '"><span class="hearpost-speed-value">' . esc_html( rtrim( rtrim( $settings['default_rate'], '0' ), '.' ) ) . 'x</span></div>';
 
-		$html .= '<label class="avr-voice-label"><span>' . esc_html__( 'Voice', 'article-voice-reader' ) . '</span><select class="avr-voice-select"><option value="">' . esc_html__( 'Default', 'article-voice-reader' ) . '</option></select></label>';
+		$html .= '<label class="hearpost-voice-label"><span>' . esc_html__( 'Voice', 'hearpost' ) . '</span><select class="hearpost-voice-select"><option value="">' . esc_html__( 'Default', 'hearpost' ) . '</option></select></label>';
 
-		$html .= '<span class="avr-status" aria-live="polite"></span>';
-		$html .= '</div>'; // .avr-panel
+		$html .= '<span class="hearpost-status" aria-live="polite"></span>';
+		$html .= '</div>'; // .hearpost-panel
 
-		$html .= '</div>'; // .avr-widget
+		$html .= '</div>'; // .hearpost-widget
 
 		return $html;
 	}
@@ -329,28 +329,28 @@ class AVR_Voice_Reader {
 			return;
 		}
 
-		$css_path = plugin_dir_path( __FILE__ ) . 'assets/css/avr-player.css';
-		$js_path  = plugin_dir_path( __FILE__ ) . 'assets/js/avr-player.js';
+		$css_path = plugin_dir_path( __FILE__ ) . 'assets/css/hearpost-player.css';
+		$js_path  = plugin_dir_path( __FILE__ ) . 'assets/js/hearpost-player.js';
 
 		wp_enqueue_style(
-			'avr-player-style',
-			plugins_url( 'assets/css/avr-player.css', __FILE__ ),
+			'hearpost-player-style',
+			plugins_url( 'assets/css/hearpost-player.css', __FILE__ ),
 			array(),
 			file_exists( $css_path ) ? filemtime( $css_path ) : self::PLUGIN_VERSION
 		);
 
 		wp_enqueue_script(
-			'avr-player',
-			plugins_url( 'assets/js/avr-player.js', __FILE__ ),
+			'hearpost-player',
+			plugins_url( 'assets/js/hearpost-player.js', __FILE__ ),
 			array(),
 			file_exists( $js_path ) ? filemtime( $js_path ) : self::PLUGIN_VERSION,
 			true
 		);
 
-		wp_localize_script( 'avr-player', 'avrPlayerData', array(
-			'notSupported' => __( 'Voice reading is not supported in this browser.', 'article-voice-reader' ),
+		wp_localize_script( 'hearpost-player', 'hearpostPlayerData', array(
+			'notSupported' => __( 'Voice reading is not supported in this browser.', 'hearpost' ),
 		) );
 	}
 }
 
-new AVR_Voice_Reader();
+new Hearpost_Voice_Reader();
